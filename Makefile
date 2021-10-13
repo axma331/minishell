@@ -52,7 +52,7 @@ libft_make:
 norme:
 					norminette $(NORM) $(SRCS)*.c $(INCLUDES)*.h
 
-gitpush:
+gitpush:			fclean
 					sh .gitpush || {									\
 					echo '#!/bin/sh' > .gitpush;						\
 					echo 'git status' >> .gitpush;						\
