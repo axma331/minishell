@@ -1,36 +1,67 @@
-DIR_HEADER	= ./includes/
+NAME				:= 	minishell
 
-SRC			= 	minishell.c \
-				path_to_binary.c \
-				utils.c \
-				utils2.c			
+CC					:= 	gcc
+RM					:= 	rm -rf
 
-OBJS		= $(SRC:.c=.o)
+RFLAGS				:=	-lreadline -L/Users/${USER}/.brew/Cellar/readline/8.1.1/lib/ -I/Users/${USER}/.brew/Cellar/readline/8.1.1/include
+OFLAGS				:=	-O2 -g #-fsanitize=address
+CFLAGS				:= 	$(OFLAGS) -Wall -Wextra -Werror
+NORM				:= 	-R CheckForbiddenSourceHeader
 
-NAME		= minishell
+LIBFT_DIR			:= 	libft/
+LIBFT				:= 	$(LIBFT_DIR)libft.a
 
-RDLN_FLAG = -L/Users/eerika/.brew/Cellar/readline/8.1/lib/ -I/Users/eerika/.brew/Cellar/readline/8.1/include
+INCLUDES			:= 	includes/
+HEADER				:= 	$(INCLUDES)*.h
 
-GCC			= gcc -g
-RM			= rm -f
-CFLAGS		= -Wall -Wextra #-Werror 
-NORM		= -R CheckForbiddenSourceHeader
+VPATH				=	$(SRCS_DIRS)
+SRCS_DIRS			=	builtins/	exec/	parsing/
+SRCS				:= 	minishell.c	\
+						cd.c	echo.c	env.c	exit.c	export.c	pwd.c	unset.c	\
+						buildins.c	find_path_to_binary.c	signals_heredoc.c	error_exec.c	in_out.c	exec.c	signals.c	exec_cmd.c\
+						error_pars.c	parse_env.c	parse_redirect.c	utils0.c	parse_cmd.c	parse_quotes.c	parsing.c	utils1.c
 
-%.o: %.c
-			$(GCC) $(CFLAGS) -I $(DIR_HEADER) -c $< -o $@
+OBJS_DIR			:=	.objs/
+OBJS				:=	$(addprefix $(OBJS_DIR), $(notdir $(SRCS:%.c=%.o)))
 
-$(NAME):	$(OBJS)
-					$(GCC) $(CFLAGS) $(OBJS) -o $(NAME) -lreadline -L/Users/${USER}/.brew/Cellar/readline/8.1/lib/ -I/Users/${USER}/.brew/Cellar/readline/8.1/include-LLibft/ -LLibft/ -lft -L.
+all:				libft_make $(NAME)
 
-all:		$(NAME)
+
+$(NAME):			$(OBJS_DIR) $(OBJS) $(LIBFT) Makefile
+					$(CC) $(CFLAGS) $(RFLAGS) $(LIBFT) $(OBJS) -o $@
+
+$(OBJS_DIR)%.o:		%.c $(HEADER)
+					$(CC) $(CFLAGS) -I $(INCLUDES) -c $< -o $@
+
+$(OBJS_DIR):
+					@mkdir -p $@
 clean:
-				$(RM) $(OBJS)
-fclean:		clean
-				make clean
-				$(RM) $(NAME)
+					make clean -C $(LIBFT_DIR)
+					$(RM) $(OBJS_DIR)
+					
+fclean:				clean
+					make fclean -C $(LIBFT_DIR)
+					$(RM) $(NAME)
+					$(RM) .gitpush
 
-re:				fclean all
+re:					fclean all
+
+libft_make:
+					@make -C $(LIBFT_DIR)
+
 norme:
-			norminette $(NORM) $(SRC)*.c $(DIR_HEADER)*.h
+					norminette $(NORM) $(SRCS)*.c $(INCLUDES)*.h
 
-.PHONY:		all clean fclean re
+gitpush:
+					sh .gitpush || {									\
+					echo '#!/bin/sh' > .gitpush;						\
+					echo 'git status' >> .gitpush;						\
+					echo 'git add .' >> .gitpush;						\
+					echo 'git status' >> .gitpush;						\
+					echo 'echo Enter commits name: ' >> .gitpush;		\
+					echo 'read commits_name' >> .gitpush;				\
+					echo 'git commit -m "$$commits_name"' >> .gitpush;	\
+					echo 'git push origin $${USER}' >> .gitpush;		\
+					sh .gitpush;}
+
+.PHONY:				all clean fclean re libft_make
