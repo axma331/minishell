@@ -4,7 +4,8 @@ CC					:= 	gcc
 RM					:= 	rm -rf
 
 RFLAGS				:=	-lreadline -L/Users/${USER}/.brew/Cellar/readline/8.1.1/lib/ -I/Users/${USER}/.brew/Cellar/readline/8.1.1/include
-OFLAGS				:=	-O2 -g #-fsanitize=address
+OFLAGS				:=	-O2 -g
+OFLAGS				+=	-fsanitize=address
 CFLAGS				:= 	$(OFLAGS) -Wall -Wextra -Werror
 NORM				:= 	-R CheckForbiddenSourceHeader
 
@@ -61,7 +62,7 @@ gitpush:			fclean
 					echo 'echo Enter commits name: ' >> .gitpush;		\
 					echo 'read commits_name' >> .gitpush;				\
 					echo 'git commit -m "$$commits_name"' >> .gitpush;	\
-					echo 'git push' >> .gitpush;		\
+					echo 'git push' >> .gitpush;						\
 					sh .gitpush;}
 
 .PHONY:				all clean fclean re libft_make
