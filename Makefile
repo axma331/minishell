@@ -5,7 +5,7 @@ RM					:= 	rm -rf
 
 RFLAGS				:=	-lreadline -L/Users/${USER}/.brew/Cellar/readline/8.1.1/lib/ -I/Users/${USER}/.brew/Cellar/readline/8.1.1/include
 OFLAGS				:=	-O2 -g
-OFLAGS				+=	-fsanitize=address
+# OFLAGS				+=	-fsanitize=address
 CFLAGS				:= 	$(OFLAGS) -Wall -Wextra -Werror
 NORM				:= 	-R CheckForbiddenSourceHeader
 
